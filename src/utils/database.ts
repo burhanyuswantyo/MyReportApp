@@ -154,3 +154,32 @@ export const loginUser = async ({
     console.log('Error login user:', error);
   }
 };
+
+export const updateUser = async ({
+  user_id,
+  name,
+  username,
+  password,
+}: {
+  user_id: number;
+  name: string;
+  username: string;
+  password: string;
+}) => {
+  const db = await openDatabase();
+
+  try {
+    await db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE users SET name = ?, username = ?, password = ? WHERE user_id = ?',
+        [name, username, password, user_id],
+      );
+    });
+    return {
+      error: false,
+      message: 'Update berhasil',
+    };
+  } catch (error) {
+    console.log('Error updating user:', error);
+  }
+};

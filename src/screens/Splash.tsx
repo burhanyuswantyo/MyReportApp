@@ -4,18 +4,34 @@ import {ActivityIndicator} from 'react-native-paper';
 import {NavigationProp} from '@react-navigation/native';
 import {createDatabase} from '../utils/database';
 import {useUser} from '../providers/UserProvider';
+import {getData} from '../utils/asyncStorage';
 
 const Splash = ({navigation}: {navigation: NavigationProp<any>}) => {
   const logo = require('../assets/images/logo.png');
-  const {user} = useUser();
+  const {signin} = useUser();
 
   useEffect(() => {
-    console.log(user);
+    createDatabase();
     setTimeout(() => {
-      createDatabase();
-      navigation.navigate('login');
+      redirectIfAuthenticated();
     }, 2000);
   }, []);
+
+  const redirectIfAuthenticated = async () => {
+    let user = await getData('user');
+    if (user) {
+      signin(user);
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'home'}],
+      });
+    } else {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'login'}],
+      });
+    }
+  };
 
   return (
     <View style={styles.container}>

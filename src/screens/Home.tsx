@@ -1,12 +1,13 @@
 import {View, ScrollView, StyleSheet} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {MD3Theme, Text, useTheme} from 'react-native-paper';
+import {Button, IconButton, MD3Theme, Text, useTheme} from 'react-native-paper';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import {useUser} from '../providers/UserProvider';
 import {fetch} from '@react-native-community/netinfo';
+import {NavigationProp} from '@react-navigation/native';
 
-const Home = () => {
+const Home = ({navigation}: {navigation: NavigationProp<any>}) => {
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState<any>(null);
   const [connection, setConnection] = useState<any>(null);
@@ -15,8 +16,8 @@ const Home = () => {
   const {user} = useUser();
 
   useEffect(() => {
-    getLocation();
-    getConnection();
+    // getLocation();
+    // getConnection();
   }, []);
 
   const getLocation = async () => {
@@ -70,44 +71,64 @@ const Home = () => {
               {user?.name}
             </Text>
           </View>
+          <View>
+            <IconButton
+              mode="contained"
+              icon="dots-horizontal"
+              size={24}
+              onPress={() => navigation.navigate('profile')}
+            />
+          </View>
         </View>
       </View>
       <View style={styles.card}>
         <Text variant="titleSmall">Lokasi Saya</Text>
-        <Text style={{marginTop: 4}} variant="bodySmall">
-          {location?.address}
-        </Text>
-        <Text
-          style={{marginTop: 8, color: theme.colors.primary}}
-          variant="bodySmall">{`${location?.latitude}, ${location?.longitude}`}</Text>
+        {location && (
+          <>
+            <Text variant="bodySmall">{location?.address}</Text>
+            <Text
+              style={{marginTop: 8, color: theme.colors.primary}}
+              variant="bodySmall">{`${location?.latitude}, ${location?.longitude}`}</Text>
+          </>
+        )}
+        <Button mode="contained" onPress={getLocation} loading={loading}>
+          {location ? 'Perbarui Lokasi' : 'Cek Lokasi'}
+        </Button>
       </View>
       <View style={styles.card}>
         <Text variant="titleSmall">Status Koneksi</Text>
-        <Text
-          style={{
-            marginTop: 4,
-            color: connection?.isConnected ? 'green' : 'red',
-          }}
-          variant="bodySmall">
-          {`${connection?.isConnected ? 'Terhubung' : 'Tidak Terhubung'} ${
-            connection?.type
-          }`}
-        </Text>
-        {connection?.type === 'wifi' && (
-          <Text style={{color: theme.colors.primary}} variant="bodySmall">
-            {`SSID: ${connection?.details?.ssid}`}
-          </Text>
-        )}
-        {connection?.type === 'cellular' && (
+        {connection && (
           <>
-            <Text style={{color: theme.colors.primary}} variant="bodySmall">
-              {`Tipe sinyal: ${connection?.details?.cellularGeneration}`}
+            <Text
+              style={{
+                marginTop: 4,
+                color: connection?.isConnected ? 'green' : 'red',
+              }}
+              variant="bodySmall">
+              {`${connection?.isConnected ? 'Terhubung' : 'Tidak Terhubung'} ${
+                connection?.type
+              }`}
             </Text>
-            <Text style={{color: theme.colors.primary}} variant="bodySmall">
-              {`Provider: ${connection?.details?.carrier}`}
-            </Text>
+            {connection?.type === 'wifi' && (
+              <Text style={{color: theme.colors.primary}} variant="bodySmall">
+                {`SSID: ${connection?.details?.ssid}`}
+              </Text>
+            )}
+            {connection?.type === 'cellular' && (
+              <>
+                <Text style={{color: theme.colors.primary}} variant="bodySmall">
+                  {`Tipe sinyal: ${connection?.details?.cellularGeneration}`}
+                </Text>
+                <Text style={{color: theme.colors.primary}} variant="bodySmall">
+                  {`Provider: ${connection?.details?.carrier}`}
+                </Text>
+              </>
+            )}
           </>
         )}
+        <Button mode="contained" onPress={getConnection}>
+          {connection ? 'Perbarui Status' : 'Cek Status'}
+        </Button>
       </View>
     </ScrollView>
   );
@@ -123,5 +144,6 @@ const createStyles = (theme: MD3Theme) =>
       borderRadius: 8,
       elevation: 4,
       backgroundColor: theme.colors.background,
+      gap: 8,
     },
   });

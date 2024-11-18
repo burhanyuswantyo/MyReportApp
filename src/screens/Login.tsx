@@ -12,6 +12,7 @@ import useForm from '../utils/useForm';
 import {loginUser} from '../utils/database';
 import {toast} from '@backpackapp-io/react-native-toast';
 import {useUser} from '../providers/UserProvider';
+import {storeData} from '../utils/asyncStorage';
 
 const Login = ({navigation}: {navigation: NavigationProp<any>}) => {
   const logo = require('../assets/images/logo.png');
@@ -30,11 +31,13 @@ const Login = ({navigation}: {navigation: NavigationProp<any>}) => {
     if (login?.error) {
       toast.error(login?.message);
     } else {
-      signin({
+      let user = {
         user_id: login?.user?.user_id,
         name: login?.user?.name,
         username: login?.user?.username,
-      });
+      };
+      await storeData('user', user);
+      signin(user);
       toast.success(login?.message);
       navigation.navigate('home');
     }
