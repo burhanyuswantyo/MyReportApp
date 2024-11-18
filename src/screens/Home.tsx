@@ -20,6 +20,7 @@ const Home = ({navigation}: {navigation: NavigationProp<any>}) => {
     // getConnection();
   }, []);
 
+  // Membuat fungsi untuk mendapatkan lokasi pengguna
   const getLocation = async () => {
     await Geolocation.getCurrentPosition(async position => {
       setLocation({
@@ -48,6 +49,7 @@ const Home = ({navigation}: {navigation: NavigationProp<any>}) => {
     });
   };
 
+  // Membuat fungsi untuk mendapatkan status koneksi pengguna
   const getConnection = async () => {
     fetch().then(state => {
       console.log(state);

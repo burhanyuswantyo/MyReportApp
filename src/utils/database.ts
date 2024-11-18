@@ -17,6 +17,7 @@ interface Report {
   user_id: number;
 }
 
+// Membuat fungsi untuk membuka database
 const openDatabase = async () => {
   try {
     const db = await SQLite.openDatabase({
@@ -30,6 +31,7 @@ const openDatabase = async () => {
   }
 };
 
+// Membuat fungsi untuk membuat database dan tabel
 export const createDatabase = async () => {
   try {
     const db = await openDatabase();
@@ -46,6 +48,7 @@ export const createDatabase = async () => {
   }
 };
 
+// Membuat fungsi untuk menghapus database
 export const deleteDatabase = async () => {
   try {
     const db = await openDatabase();
@@ -60,6 +63,7 @@ export const deleteDatabase = async () => {
   }
 };
 
+// Membuat fungsi untuk cek username sudah terdaftar atau belum
 const checkUsernameExists = async (username: string) => {
   const db = await openDatabase();
   try {
@@ -75,6 +79,7 @@ const checkUsernameExists = async (username: string) => {
   return false;
 };
 
+// Membuat fungsi untuk menambahkan data user
 export const registerUser = async ({
   name,
   username,
@@ -110,6 +115,7 @@ export const registerUser = async ({
   }
 };
 
+// Membuat fungsi untuk login user
 export const loginUser = async ({
   username,
   password,
@@ -133,7 +139,9 @@ export const loginUser = async ({
     }
     const passwordMatch = await new Promise<boolean>((resolve, reject) => {
       reactNativeBcrypt.compare(password, user.password, function (err, res) {
-        if (err) reject(err);
+        if (err) {
+          reject(err);
+        }
         resolve(res);
       });
     });
@@ -155,6 +163,7 @@ export const loginUser = async ({
   }
 };
 
+// Membuat fungsi untuk update data user
 export const updateUser = async ({
   user_id,
   name,
